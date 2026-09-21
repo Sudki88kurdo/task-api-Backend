@@ -2,7 +2,7 @@
 import { prisma } from "../lib/prisma.js";
 
 // DTO importieren
-import type { CreateTaskDto } from "../dtos/task.dto.js";
+import type { CreateTaskDto, UpdateTaskDto } from "../dtos/task.dto.js";
 
 // Alle Tasks abrufen
 export async function findAllTasks() {
@@ -31,6 +31,20 @@ export async function insertTask(
     // Den erstellten Task zurückgeben
     return task;
 }
+
+export async function updateTask(
+    id: number,
+    data: UpdateTaskDto
+) {
+    const task = await prisma.task.update({
+        where: {
+            id: id
+        },
+        data: data
+    });
+    return task;
+}
+
 
 export async function findTaskById(
     id: number

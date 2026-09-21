@@ -2,11 +2,12 @@
 import {
     findAllTasks,
     insertTask,
-    findTaskById
+    findTaskById,
+    updateTask as updateTaskRepository
 } from "../repositories/task.repository.js";
 
 // DTO importieren
-import type { CreateTaskDto } from "../dtos/task.dto.js";
+import type { CreateTaskDto, UpdateTaskDto } from "../dtos/task.dto.js";
 
 // Service für GET /tasks
 export async function getTasks() {
@@ -38,5 +39,15 @@ export async function createTask(data: CreateTaskDto) {
 export async function getTaskById(id: number) {
     // Repository aufrufen
     const task = await findTaskById(id);
+    return task;
+}
+
+// Service für PUT /tasks/:id
+export async function updateTask(
+    id: number,
+    data: UpdateTaskDto
+) {
+    // Repository aufrufen
+    const task = await updateTaskRepository(id, data);
     return task;
 }

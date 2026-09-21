@@ -5,7 +5,8 @@ import { Router } from "express";
 import {
     getTasks,
     createTask,
-    getTaskById
+    getTaskById,
+    updateTask
 } from "../controllers/task.controller.js";
 
 // Einen Router erstellen
@@ -20,6 +21,9 @@ router.get("/", getTasks);
 router.post("/", createTask);
 
 router.get("/:id", getTaskById);
+
+router.put("/:id", updateTask);
+router.patch("/:id", updateTask);
 
 // Router exportieren
 export default router;

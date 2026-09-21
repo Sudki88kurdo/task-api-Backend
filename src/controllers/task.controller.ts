@@ -5,7 +5,8 @@ import type { Request, Response } from "express";
 import {
     getTasks as getTasksService,
     createTask as createTaskService,
-    getTaskById as getTaskByIdService
+    getTaskById as getTaskByIdService,
+    updateTask as updateTaskService
 } from "../services/task.service.js";
 
 // Controller für GET /tasks
@@ -68,5 +69,79 @@ export async function getTaskById(
             message: "Task nicht gefunden"
         });
     }
+    res.status(200).json(task);
+}
+
+// PATCH /tasks/:id
+// Aktualisiert einen bestehenden Task
+export async function updateTask(
+    req: Request,
+    res: Response
+) {
+    // ID aus der URL lesen.
+    const id = Number(req.params.id);
+
+    // Prüfen, ob die ID eine gültige ganze Zahl ist.
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({
+            message: "id muss eine ganze Zahl sein"
+        });
+    }
+
+    // Daten aus dem Request Body lesen.
+    const { title, completed } = req.body;
+
+    // Prüfen, ob mindestens ein Feld gesendet wurde.
+    if (
+        title === undefined &&
+        completed === undefined
+    ) {
+        return res.status(400).json({
+            message: "Mindestens ein Feld muss angegeben werden"
+        });
+    }
+
+    // title validieren, falls es vorhanden ist.
+    if (
+        title !== undefined &&
+        typeof title !== "string"
+    ) {
+        return res.status(400).json({
+            message: "title muss ein String sein"
+        });
+    }
+
+    // title darf nicht leer sein.
+    if (
+        title !== undefined &&
+        title.trim().length === 0
+    ) {
+        return res.status(400).json({
+            message: "title darf nicht leer sein"
+        });
+    }
+
+    // completed validieren, falls es vorhanden ist.
+    if (
+        completed !== undefined &&
+        typeof completed !== "boolean"
+    ) {
+        return res.status(400).json({
+            message: "completed muss ein Boolean sein"
+        });
+    }
+
+    // Nur validierte Daten an den Service weitergeben.
+    const task = await updateTaskService(id, {
+        ...(title !== undefined && {
+            title: title.trim()
+        }),
+
+        ...(completed !== undefined && {
+            completed
+        })
+    });
+
+    // Aktualisierten Task zurückgeben.
     res.status(200).json(task);
 }
