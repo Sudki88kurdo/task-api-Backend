@@ -1,0 +1,29 @@
+generator client {
+  // Neuer Prisma Client Generator
+  provider = "prisma-client"
+
+  // Hier soll der generierte Client landen
+  output = "../generated/prisma"
+}
+
+datasource db {
+  // Unsere Datenbank ist PostgreSQL
+  provider = "postgresql"
+}
+
+model Task {
+  // Eindeutige ID
+  id Int @id @default(autoincrement())
+
+  // Titel des Tasks
+  title String
+
+  // Standardmäßig nicht erledigt
+  completed Boolean @default(false)
+
+  // Erstellungszeitpunkt
+  createdAt DateTime @default(now())
+
+  // Wird automatisch aktualisiert
+  updatedAt DateTime @updatedAt
+}
