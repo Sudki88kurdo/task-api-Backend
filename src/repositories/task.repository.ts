@@ -31,3 +31,14 @@ export async function insertTask(
     // Den erstellten Task zurückgeben
     return task;
 }
+
+export async function findTaskById(
+    id: number
+) {
+    const task = await prisma.task.findUnique({
+        where: {
+            id: id
+        }
+    });
+    return task;
+}

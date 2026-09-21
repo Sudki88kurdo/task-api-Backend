@@ -1,7 +1,8 @@
 // Repository-Funktionen importieren
 import {
     findAllTasks,
-    insertTask
+    insertTask,
+    findTaskById
 } from "../repositories/task.repository.js";
 
 // DTO importieren
@@ -31,5 +32,11 @@ export async function createTask(data: CreateTaskDto) {
     const task = await insertTask(data);
 
     // Erstellte Task zurückgeben
+    return task;
+}
+// Service für GET /tasks/:id
+export async function getTaskById(id: number) {
+    // Repository aufrufen
+    const task = await findTaskById(id);
     return task;
 }

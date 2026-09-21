@@ -4,7 +4,8 @@ import type { Request, Response } from "express";
 // Services importieren
 import {
     getTasks as getTasksService,
-    createTask as createTaskService
+    createTask as createTaskService,
+    getTaskById as getTaskByIdService
 } from "../services/task.service.js";
 
 // Controller für GET /tasks
@@ -48,4 +49,24 @@ export async function createTask(
 
     // Erfolgreiche Erstellung
     res.status(201).json(task);
+
+
+}
+export async function getTaskById(
+    req: Request,
+    res: Response
+) {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({
+            message: "id muss eine ganze Zahl sein"
+        });
+    }
+    const task = await getTaskByIdService(id);
+    if (!task) {
+        return res.status(404).json({
+            message: "Task nicht gefunden"
+        });
+    }
+    res.status(200).json(task);
 }
