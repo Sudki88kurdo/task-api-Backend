@@ -3,11 +3,13 @@ import {
     findAllTasks,
     insertTask,
     findTaskById,
-    updateTask as updateTaskRepository
+    updateTask as updateTaskRepository,
+    deleteTask as deleteTaskRepository
 } from "../repositories/task.repository.js";
 
 // DTO importieren
 import type { CreateTaskDto, UpdateTaskDto } from "../dtos/task.dto.js";
+import e from "express";
 
 // Service für GET /tasks
 export async function getTasks() {
@@ -50,4 +52,11 @@ export async function updateTask(
     // Repository aufrufen
     const task = await updateTaskRepository(id, data);
     return task;
+}
+
+export async function deleteTask(
+    id: number
+) {
+    // Repository aufrufen
+    await deleteTaskRepository(id);
 }

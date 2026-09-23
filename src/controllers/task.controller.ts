@@ -6,8 +6,10 @@ import {
     getTasks as getTasksService,
     createTask as createTaskService,
     getTaskById as getTaskByIdService,
-    updateTask as updateTaskService
+    updateTask as updateTaskService,
+    deleteTask as deleteTaskService
 } from "../services/task.service.js";
+import e from "express";
 
 // Controller für GET /tasks
 export async function getTasks(
@@ -21,13 +23,15 @@ export async function getTasks(
     res.status(200).json(tasks);
 }
 
+//__________________________________________________________________
+
 // Controller für POST /tasks
 export async function createTask(
     req: Request,
     res: Response
 ) {
     // title aus dem Request Body holen
-    const { title } = req.body;
+    const { title, completed } = req.body;
 
     // Prüfen, ob title ein String ist
     if (typeof title !== "string") {
@@ -42,10 +46,20 @@ export async function createTask(
             message: "title darf nicht leer sein"
         });
     }
+    // Wenn completed angegeben wurde,
+    // muss es ein Boolean sein
+    if (
+        completed !== undefined &&
+        typeof completed !== "boolean"
+    ) {
+        return res.status(400).json({
+            message: "completed muss ein Boolean sein"
+        });
+    }
 
     // Task erstellen
     const task = await createTaskService({
-        title: title.trim()
+        title: title.trim(), completed
     });
 
     // Erfolgreiche Erstellung
@@ -53,6 +67,9 @@ export async function createTask(
 
 
 }
+
+//__________________________________________________________________
+
 export async function getTaskById(
     req: Request,
     res: Response
@@ -71,6 +88,8 @@ export async function getTaskById(
     }
     res.status(200).json(task);
 }
+
+//__________________________________________________________________
 
 // PATCH /tasks/:id
 // Aktualisiert einen bestehenden Task
@@ -144,4 +163,24 @@ export async function updateTask(
 
     // Aktualisierten Task zurückgeben.
     res.status(200).json(task);
+}
+
+//__________________________________________________________________
+
+export async function deleteTask(
+    req: Request,
+    res: Response
+) {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({
+            message: "id muss eine ganze Zahl sein"
+        });
+    }
+
+    // Wenn die ID nicht existiert, wirft Prisma momentan einen Fehler
+    await deleteTaskService(id);
+
+    // 204 = erfolgreich gelöscht, aber kein Response-Body
+    res.status(204).send();
 }

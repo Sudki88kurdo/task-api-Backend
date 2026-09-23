@@ -24,7 +24,8 @@ export async function insertTask(
 
         // Daten, die in die Datenbank geschrieben werden
         data: {
-            title: data.title
+            title: data.title,
+            completed: data.completed ?? false
         }
     });
 
@@ -55,4 +56,14 @@ export async function findTaskById(
         }
     });
     return task;
+}
+
+export async function deleteTask(
+    id: number
+) {
+    await prisma.task.delete({
+        where: {
+            id: id
+        }
+    });
 }

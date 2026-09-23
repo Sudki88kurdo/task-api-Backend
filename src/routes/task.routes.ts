@@ -6,7 +6,8 @@ import {
     getTasks,
     createTask,
     getTaskById,
-    updateTask
+    updateTask,
+    deleteTask
 } from "../controllers/task.controller.js";
 
 // Einen Router erstellen
@@ -24,6 +25,6 @@ router.get("/:id", getTaskById);
 
 router.put("/:id", updateTask);
 router.patch("/:id", updateTask);
-
+router.delete("/:id", deleteTask);
 // Router exportieren
 export default router;

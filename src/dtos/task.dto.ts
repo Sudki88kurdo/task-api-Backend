@@ -4,6 +4,7 @@ export interface CreateTaskDto {
 
     // Der neue Task benötigt einen Titel
     title: string;
+    completed?: boolean;
 }
 
 // Daten, die beim Aktualisieren eines Tasks akzeptiert werden
