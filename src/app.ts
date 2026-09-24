@@ -4,6 +4,9 @@ import express from "express";
 // Unseren Task-Router importieren.
 // Pfad korrigiert, falls die Datei "tasks.routes" heißt.
 import taskRouter from "./routes/task.routes.js";
+import { errorMiddleware } from "./middleware/error.middleware.js";
+
+
 
 // Express-Anwendung erstellen.
 const app = express();
@@ -25,6 +28,9 @@ app.use(express.json());
 //         ↓
 // taskRouter
 app.use("/tasks", taskRouter);
+
+// Error Middleware MUSS nach den Routes kommen
+app.use(errorMiddleware);
 
 // App exportieren.
 export default app;

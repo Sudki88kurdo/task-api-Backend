@@ -1,5 +1,6 @@
 // Express-Typen importieren
 import type { Request, Response } from "express";
+import { AppError } from "../errors/app-error.js";
 
 // Services importieren
 import {
@@ -9,6 +10,7 @@ import {
     updateTask as updateTaskService,
     deleteTask as deleteTaskService
 } from "../services/task.service.js";
+
 import e from "express";
 
 // Controller für GET /tasks
@@ -35,28 +37,20 @@ export async function createTask(
 
     // Prüfen, ob title ein String ist
     if (typeof title !== "string") {
-        return res.status(400).json({
-            message: "title muss ein String sein"
-        });
+        throw new AppError("title muss ein String sein", 400);
     }
 
     // Prüfen, ob title leer ist
     if (title.trim().length === 0) {
-        return res.status(400).json({
-            message: "title darf nicht leer sein"
-        });
+        throw new AppError("title darf nicht leer sein", 400);
     }
     // Wenn completed angegeben wurde,
     // muss es ein Boolean sein
     if (
-        completed !== undefined &&
-        typeof completed !== "boolean"
+        completed !== undefined && typeof completed !== "boolean"
     ) {
-        return res.status(400).json({
-            message: "completed muss ein Boolean sein"
-        });
+        throw new AppError("completed muss ein Boolean (true or false) sein", 400);
     }
-
     // Task erstellen
     const task = await createTaskService({
         title: title.trim(), completed
@@ -76,15 +70,13 @@ export async function getTaskById(
 ) {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) {
-        return res.status(400).json({
-            message: "id muss eine ganze Zahl sein"
-        });
+        throw new AppError("id muss eine ganze Zahl sein", 400);
     }
+
     const task = await getTaskByIdService(id);
     if (!task) {
-        return res.status(404).json({
-            message: "Task nicht gefunden"
-        });
+
+        throw new AppError("Task nicht gefunden", 404);
     }
     res.status(200).json(task);
 }
@@ -102,9 +94,7 @@ export async function updateTask(
 
     // Prüfen, ob die ID eine gültige ganze Zahl ist.
     if (!Number.isInteger(id)) {
-        return res.status(400).json({
-            message: "id muss eine ganze Zahl sein"
-        });
+        throw new AppError("id muss eine ganze Zahl sein", 400);
     }
 
     // Daten aus dem Request Body lesen.
@@ -115,9 +105,7 @@ export async function updateTask(
         title === undefined &&
         completed === undefined
     ) {
-        return res.status(400).json({
-            message: "Mindestens ein Feld muss angegeben werden"
-        });
+        throw new AppError("Mindestens ein Feld muss angegeben werden", 400);
     }
 
     // title validieren, falls es vorhanden ist.
@@ -125,9 +113,7 @@ export async function updateTask(
         title !== undefined &&
         typeof title !== "string"
     ) {
-        return res.status(400).json({
-            message: "title muss ein String sein"
-        });
+        throw new AppError("title muss ein String sein", 400);
     }
 
     // title darf nicht leer sein.
@@ -135,9 +121,7 @@ export async function updateTask(
         title !== undefined &&
         title.trim().length === 0
     ) {
-        return res.status(400).json({
-            message: "title darf nicht leer sein"
-        });
+        throw new AppError("title darf nicht leer sein", 400);
     }
 
     // completed validieren, falls es vorhanden ist.
@@ -145,10 +129,10 @@ export async function updateTask(
         completed !== undefined &&
         typeof completed !== "boolean"
     ) {
-        return res.status(400).json({
-            message: "completed muss ein Boolean sein"
-        });
+        throw new AppError("completed muss ein Boolean sein", 400);
     }
+
+
 
     // Nur validierte Daten an den Service weitergeben.
     const task = await updateTaskService(id, {
@@ -173,10 +157,9 @@ export async function deleteTask(
 ) {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) {
-        return res.status(400).json({
-            message: "id muss eine ganze Zahl sein"
-        });
+        throw new AppError("id muss eine ganze Zahl sein", 400);
     }
+
 
     // Wenn die ID nicht existiert, wirft Prisma momentan einen Fehler
     await deleteTaskService(id);
